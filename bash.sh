@@ -29,7 +29,7 @@ source venv/bin/activate
 
 # Запуск проекта (здесь замените main.py на ваш основной файл)
 echo "Запускаем проект..."
-python main.py
+python src/main.py
 
 # Деактивация (по желанию)
 deactivate
