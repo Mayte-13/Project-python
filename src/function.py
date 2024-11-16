@@ -1,8 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from user import User
-from book import Book
-
+from book import Book, book_data
 
 # User registration window
 def register_user(root, username='', password='', age = 0, gender ="", prefer_genre = []):
@@ -16,8 +15,7 @@ def register_user(root, username='', password='', age = 0, gender ="", prefer_ge
 
         # Open the main window
         open_main_page(user)
-        
-        
+
  # Home page   
 def open_main_page(user):
     """Opens the main window with a search bar and genres."""
@@ -38,58 +36,70 @@ def open_main_page(user):
     )
     welcome_label.pack()
 
-   # Book search field
+    # Book search field
     search_label = tk.Label(main_root, text="Search books:", font=("Arial", 18), bg="#ffe590")
     search_label.pack(pady=10)
 
     search_entry = tk.Entry(main_root, font=("Arial", 14))
     search_entry.pack(pady=10)
+    
+    # Search button
+    search_button = tk.Button(
+        root,
+        text="Search",
+        font=("Arial", 14),
+        command=lambda: search_books(search_entry.get(), root)
+    )
+    search_button.pack(pady=5)
 
     # Genres
     genres_label = tk.Label(main_root, text="Select a genre:", font=("Arial", 18), bg="#ffe590")
     genres_label.pack(pady=10)
 
-    genres = ["World Classics", "Detectives", "Fantasy", "Psychology"]
+    genres = list(book_data.keys())  
     for genre in genres:
-        genre_button = tk.Button(main_root, text=genre, font=("Arial", 14), command=lambda g=genre: recommend_books(g, main_root))
+        genre_button = tk.Button(main_root, text=genre, font=("Arial", 14),
+                                 command=lambda g=genre: recommend_books(g, main_root))
         genre_button.pack(pady=5)
 
     main_root.mainloop()
     
-    
-    
-book_data = {
-    "World Classics": [
-        Book("1984", "George Orwell"),
-        Book("Brave New World", "Aldous Huxley "),
-        Book("Life on Loan", "Remarque Erich Maria "),
-        Book("The Art of Loving", "Erich Fromm "),
-        Book("Arc de Triomphe", "Erich Maria Remarque"),
-        Book("One Hundred Years of Solitude", "Gabriel Garcia Marquez"),
-        Book("Pride and Prejudice", "Jane Austen"),
-        Book("Lord of the Flies", "William Golding "),
-        Book("The Hitchhiker's Guide to the Galaxy. The Restaurant at the End of the Universe", "Douglas Adams"),
-        Book("To Kill a Mockingbird", "Harper Lee"),
-        Book("A Clockwork Orange", "Burgess Anthony"),
-        Book("The Picture of Dorian Gray", "Oscar Wilde"),
-        Book("Letters to a Stranger", "Maurois Andre "),
-        Book("The Man Who Mistook His Wife for a Hat and Other Medical Stories", "Sacks Oliver "),
-        Book("Animal Farm. Essay", "Orwell George "),
-        Book("The Notebook", "Sparks Nicholas"),
-        Book("Night in Lisbon", "Remarque Erich Maria "),
-        Book("All Quiet on the Western Front", "Remarque Erich Maria"),
-        Book("Fight Club", "Chuck Palahniuk"),
-        Book("Three Comrades", "Remarque Erich Maria")
-    ],
-    # Additional genres can be added here
-}
+# Book search
+def search_books(query, window):
+    """Searches for a book by title and displays the result."""
+    global current_recommendations_label
 
+    # Remove the current list of recommendations, if there is one.
+    if current_recommendations_label:
+        current_recommendations_label.destroy()
+
+    # Searching for a book in the system
+    found_books = []
+    for genre, books in book_data.items():
+        found_books.extend([book for book in books if query.lower() in book.title.lower()])
+
+    # Forming a message with search results
+    if found_books:
+        recommendations = "\n\n".join([f"{book.title} by {book.author}" for book in found_books])
+        result_text = f"Search results for '{query}':\n\n{recommendations}"
+    else:
+        result_text = f"No books found for '{query}'."
+
+    # Display the results with larger font and spacing
+    current_recommendations_label = tk.Label(
+        window, 
+        text=result_text, 
+        font=("Arial", 16),  
+        bg="#ffe590", 
+        justify="left"
+    )
+    current_recommendations_label.pack(pady=20)
 
 # Global variable to store the current list of recommendations
 current_recommendations_label = None
 
 def recommend_books(genre, window):
-    """Recommends books by selected genre"""
+    """Recommends books by selected genre."""
     global current_recommendations_label
 
     # Delete the current list of recommendations if it exists
@@ -99,9 +109,13 @@ def recommend_books(genre, window):
     # We receive books according to the selected genre
     books = book_data.get(genre, [])
     recommendations = "\n\n".join([f"{book.title} by {book.author}" for book in books])
-
-    # Displaying new recommendations
-    current_recommendations_label = tk.Label(window, text=f"Recommendations for '{genre}':\n\n{recommendations}", font=("Arial", 14), bg="#ffe590", justify="left")
-    current_recommendations_label.pack(pady=10)
-       
-        
+    
+    # Displaying new recommendations with larger font and spacing
+    current_recommendations_label = tk.Label(
+        window, 
+        text=f"Recommendations for '{genre}':\n\n{recommendations}", 
+        font=("Arial", 16),  
+        bg="#ffe590", 
+        justify="left"
+    )
+    current_recommendations_label.pack(pady=20)
