@@ -5,6 +5,7 @@ if [ ! -d "venv" ]; then
     echo "Папка 'venv' не найдена. Создаем виртуальное окружение..."
     
     # Создание виртуального окружения
+    which python3
     python3 -m venv venv
     
     # Активируем виртуальное окружение
@@ -13,7 +14,7 @@ if [ ! -d "venv" ]; then
     # Установка зависимостей из файла req.txt
     if [ -f "req.txt" ]; then
         echo "Устанавливаем зависимости из req.txt..."
-        pip install -r req.txt
+        pip3 install -r req.txt
     else
         echo "Файл 'req.txt' не найден. Убедитесь, что он существует."
         exit 1
@@ -29,7 +30,7 @@ source venv/bin/activate
 
 # Запуск проекта (здесь замените main.py на ваш основной файл)
 echo "Запускаем проект..."
-python src/main.py
+python3 src/main.py
 
 # Деактивация (по желанию)
 deactivate
