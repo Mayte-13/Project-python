@@ -3,7 +3,9 @@
 # Проверка наличия папки venv
 if [ ! -d "venv" ]; then
     echo "Папка 'venv' не найдена. Создаем виртуальное окружение..."
-    
+
+    brew install python-tk
+
     # Создание виртуального окружения
     which python3
     python3 -m venv venv
